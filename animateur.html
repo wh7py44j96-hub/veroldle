@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verlordle — Animateur</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a2e;color:#fff;min-height:100vh;padding:2rem 1rem}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:28px;font-weight:700;text-align:center;margin-bottom:4px}
+.sub{text-align:center;color:#AFA9EC;font-size:14px;margin-bottom:2rem}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{from{opacity:1}to{opacity:0.4}}
+@keyframes riseUp{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
+@keyframes bounceIn{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.panel{background:#16213e;border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;border:1px solid #0f3460;animation:fadeIn 0.4s ease}
+.panel-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#AFA9EC;margin-bottom:1rem;font-weight:500}
+.pin-display{font-size:52px;font-weight:800;letter-spacing:10px;text-align:center;color:#7F77DD;margin:1rem 0}
+.join-url{text-align:center;font-size:13px;color:#AFA9EC;word-break:break-all;margin-bottom:1rem}
+.player-count{text-align:center;font-size:15px;color:#AFA9EC;margin:1rem 0}
+.btn{padding:10px 28px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;transition:opacity 0.15s,transform 0.1s}
+.btn:hover{opacity:0.85}.btn:active{transform:scale(0.97)}
+.btn-primary{background:#7F77DD;color:#fff}
+.btn-danger{background:#e21b3c;color:#fff}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.q-counter{text-align:center;font-size:13px;color:#AFA9EC;margin-bottom:12px}
+.q-display{font-size:24px;font-weight:700;text-align:center;margin-bottom:6px;line-height:1.4;animation:slideIn 0.35s ease}
+.q-hint{text-align:center;font-size:14px;color:#AFA9EC;margin-bottom:1.25rem}
+.dashes{display:flex;gap:10px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.dash{width:44px;height:52px;border-bottom:3px solid #7F77DD;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-size:24px;font-weight:700;color:#AFA9EC}
+.timer-text{text-align:center;font-size:48px;font-weight:800;color:#7F77DD;margin-bottom:8px;transition:color 0.3s}
+.timer-text.urgent{color:#e21b3c;animation:pulse 0.5s infinite alternate}
+.timer-bar-bg{height:10px;background:#0f3460;border-radius:5px;overflow:hidden;margin-bottom:1.5rem}
+.timer-bar{height:10px;background:#7F77DD;border-radius:5px;transition:width 0.1s linear,background 0.3s}
+.timer-bar.urgent{background:#e21b3c}
+.reveal-box{background:#26890c;border-radius:12px;padding:1rem 1.5rem;text-align:center;font-size:22px;font-weight:700;margin-bottom:8px;animation:popIn 0.35s ease}
+.reveal-context{text-align:center;font-size:13px;color:#AFA9EC;margin-bottom:1.25rem;line-height:1.6}
+.stats-row{display:flex;gap:10px;justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap}
+.stat-card{background:#0f3460;border-radius:10px;padding:10px 20px;text-align:center;animation:popIn 0.3s ease}
+.stat-num{font-size:26px;font-weight:700;color:#7F77DD}
+.stat-label{font-size:12px;color:#AFA9EC;margin-top:2px}
+.scoreboard{display:flex;flex-direction:column;gap:8px}
+.score-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#0f3460;border-radius:10px;animation:fadeIn 0.3s ease}
+.rank{width:28px;height:28px;border-radius:50%;background:#7F77DD;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.rank.gold{background:#d89e00}.rank.silver{background:#888780}.rank.bronze{background:#a0522d}
+.player-name{flex:1;font-weight:500;font-size:15px}
+.player-score{font-size:18px;font-weight:700;color:#7F77DD}
+.pts-badge{font-size:12px;font-weight:600;padding:2px 8px;border-radius:20px}
+.pts-badge.pos{background:#26890c;color:#fff}.pts-badge.zero{background:#e21b3c;color:#fff}
+.waiting{text-align:center;padding:1.5rem;color:#AFA9EC;font-size:15px}
+/* Podium */
+.podium-title{font-size:22px;font-weight:800;text-align:center;margin-bottom:6px}
+.podium-subtitle{text-align:center;color:#AFA9EC;font-size:14px;margin-bottom:2rem}
+.podium-stage{display:flex;align-items:flex-end;justify-content:center;gap:12px;height:220px;margin-bottom:1.5rem}
+.podium-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px}
+.p-emoji{font-size:34px;animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both}
+.pp1 .p-emoji{animation-delay:0.5s}.pp2 .p-emoji{animation-delay:0.15s}.pp3 .p-emoji{animation-delay:0.8s}
+.p-name{font-size:13px;font-weight:700;text-align:center;max-width:90px;word-break:break-word;line-height:1.3}
+.p-score{font-size:12px;color:#AFA9EC;margin-bottom:4px}
+.p-block{border-radius:10px 10px 0 0;width:88px;transform-origin:bottom;animation:riseUp 0.7s cubic-bezier(0.34,1.56,0.64,1) both;display:flex;align-items:center;justify-content:center}
+.pp1 .p-block{height:100px;background:#1368ce;animation-delay:0.4s}
+.pp2 .p-block{height:150px;background:#d89e00;animation-delay:0.1s}
+.pp3 .p-block{height:75px;background:#a0522d;animation-delay:0.7s}
+.p-num{font-size:24px;font-weight:800;color:#fff}
+.rest-list{display:flex;flex-direction:column;gap:8px}
+.rest-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#0f3460;border-radius:10px;animation:fadeIn 0.4s ease both}
+.rest-rank{width:28px;height:28px;border-radius:50%;background:#4a4a6a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.rest-name{flex:1;font-size:14px;font-weight:500}
+.rest-score{font-size:15px;font-weight:700;color:#7F77DD}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Verlordle</h1>
+  <div class="sub">Tableau de bord animateur</div>
+
+  <div class="panel" id="lobby-panel">
+    <div class="panel-title">Salle d'attente</div>
+    <div class="pin-display" id="pin-display">···</div>
+    <div class="join-url" id="join-url">Chargement...</div>
+    <div class="player-count" id="player-count">0 joueur(s) connecté(s)</div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="startGame()">Lancer la partie</button></div>
+  </div>
+
+  <div class="panel" id="game-panel" style="display:none">
+    <div class="q-counter" id="q-counter"></div>
+    <div class="q-display" id="q-display"></div>
+    <div class="q-hint" id="q-hint"></div>
+    <div class="dashes" id="dashes"></div>
+    <div class="timer-text" id="timer-text">20</div>
+    <div class="timer-bar-bg"><div class="timer-bar" id="timer-bar" style="width:100%"></div></div>
+    <div class="btn-row"><button class="btn btn-danger" onclick="revealAnswer()">Révéler la réponse</button></div>
+  </div>
+
+  <div class="panel" id="reveal-panel" style="display:none">
+    <div class="reveal-box" id="reveal-box"></div>
+    <div class="reveal-context" id="reveal-context"></div>
+    <div class="stats-row" id="stats-row"></div>
+    <div class="scoreboard" id="scoreboard-reveal"></div>
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Question suivante →</button>
+    </div>
+  </div>
+
+  <div class="panel" id="final-panel" style="display:none">
+    <div class="podium-title">🏆 Classement final</div>
+    <div class="podium-subtitle">Félicitations à tous les participants !</div>
+    <div class="podium-stage" id="podium-stage"></div>
+    <div class="rest-list" id="rest-list"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Joueurs en direct</div>
+    <div class="scoreboard" id="players-live"><div class="waiting">En attente de joueurs...</div></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBrjfz2K-u4gmxVOmD2yE01Spp_zBPnNJE",
+  authDomain: "expose-verlan-sh20.firebaseapp.com",
+  databaseURL: "https://expose-verlan-sh20-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "expose-verlan-sh20",
+  storageBucket: "expose-verlan-sh20.firebasestorage.app",
+  messagingSenderId: "701545495057",
+  appId: "1:701545495057:web:040274e8a9a990c81e0fb0"
+};
+
+const WORDS = [
+  {word:"MEUF",    hint:"Désigne une femme, une fille",                        origin:"FEMME",    context:"L'un des mots verlan les plus répandus — passé dans le français courant de toutes les générations."},
+  {word:"OUF",     hint:"Quelque chose d'intense, d'incroyable",               origin:"FOU",      context:"'C'est ouf !' — tellement lexicalisé qu'il figure désormais dans certains dictionnaires."},
+  {word:"TEUF",    hint:"Une soirée, une fête",                                origin:"FETE",     context:"Utilisé bien au-delà des cités, symbole parfait de la diffusion grand public du verlan."},
+  {word:"RELOU",   hint:"Quelqu'un de pénible, une situation pesante",         origin:"LOURD",    context:"'T'es relou' — intégré au français standard, y compris chez les adultes et dans les médias."},
+  {word:"KEUF",    hint:"Un policier, en argot",                               origin:"FLIC",     context:"Créé pour parler de la police sans être compris : exemple parfait de la fonction cryptique du verlan."},
+  {word:"REUM",    hint:"La mère, la maman",                                   origin:"MERE",     context:"Avec REUP, fait partie du vocabulaire familial verlanisé très répandu dans les cités."},
+  {word:"CIMER",   hint:"Pour remercier quelqu'un",                            origin:"MERCI",    context:"Un des rares mots verlan positifs — sa diffusion illustre bien la récupération grand public."},
+  {word:"VENER",   hint:"Être en colère, irrité",                              origin:"NERVE",    context:"'Je suis trop véner' — exemple de verlan émotionnel très courant."},
+  {word:"REUP",    hint:"Le père, le papa",                                    origin:"PERE",     context:"Pendant de REUM — illustre la verlanisation systématique du vocabulaire familial."},
+  {word:"KEUM",    hint:"Un garçon, un type",                                  origin:"MEC",      context:"Pendant masculin de MEUF — l'un des binômes verlan les plus utilisés."},
+  {word:"REUBEU",  hint:"Désigne une personne d'origine arabe",                origin:"ARABE",    context:"Terme identitaire fort — illustre comment le verlan construit une appartenance communautaire."},
+  {word:"CHELOU",  hint:"Quelque chose de bizarre, de suspect",                origin:"LOUCHE",   context:"'C'est chelou' — utilisé par toutes les générations, exemple parfait de lexicalisation."},
+  {word:"CHANME",  hint:"Quelque chose de très bien, d'impressionnant",        origin:"MECHAN",   context:"'Méchant' devient positif en verlan, comme 'bad' en anglais argotique."},
+  {word:"CAILLRA", hint:"Les jeunes de la rue, la 'racaille'",                 origin:"RACAILLE", context:"Mot emblématique du lexique des cités, chargé politiquement."},
+  {word:"FEUJ",    hint:"Désigne une personne de confession juive",            origin:"JUIF",     context:"Verlan identitaire communautaire, utilisé d'abord au sein de la communauté puis diffusé plus largement."},
+];
+
+const MAX_TIME = 20;
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const PIN = Math.floor(100000 + Math.random()*900000).toString();
+const gameRef = ref(db, `games/${PIN}`);
+let currentQ=0, timerInterval=null, players={};
+
+async function init() {
+  await set(gameRef, {pin:PIN, phase:'lobby', currentQ:-1, questionStart:0, players:{}});
+  document.getElementById('pin-display').textContent = PIN;
+  const base = location.href.replace('animateur.html','joueur.html');
+  document.getElementById('join-url').innerHTML = `🔗 Lien joueurs : <strong>${base}</strong>`;
+  onValue(ref(db,`games/${PIN}/players`), snap => {
+    players = snap.val()||{};
+    renderLive();
+    document.getElementById('player-count').textContent = `${Object.keys(players).length} joueur(s) connecté(s)`;
+  });
+}
+
+function renderLive() {
+  const el = document.getElementById('players-live');
+  const sorted = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+  if (!sorted.length) { el.innerHTML='<div class="waiting">En attente de joueurs...</div>'; return; }
+  el.innerHTML = sorted.map(([,p],i)=>`
+    <div class="score-row">
+      <div class="rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
+      <div class="player-name">${p.name||'Anonyme'}</div>
+      <div class="player-score">${p.score||0} pts</div>
+    </div>`).join('');
+}
+
+window.startGame = async function() {
+  if (!Object.keys(players).length) { alert('Aucun joueur connecté !'); return; }
+  currentQ=0; await showQuestion();
+}
+
+async function showQuestion() {
+  const q = WORDS[currentQ];
+  hide('lobby-panel'); hide('reveal-panel'); hide('final-panel'); show('game-panel');
+  document.getElementById('q-counter').textContent = `Question ${currentQ+1} / ${WORDS.length}`;
+  document.getElementById('q-display').textContent = q.hint;
+  document.getElementById('q-hint').textContent = `Mot verlan · ${q.word.length} lettre${q.word.length>1?'s':''}`;
+  document.getElementById('dashes').innerHTML = Array.from({length:q.word.length}).map(()=>
+    `<div class="dash">_</div>`).join('');
+  const questionStart = Date.now();
+  await update(gameRef, {phase:'playing', currentQ, questionStart, correctAnswer:q.word});
+  await set(ref(db,`games/${PIN}/answers`), {});
+  startTimer(questionStart);
+}
+
+function startTimer(qStart) {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    const left = Math.max(0, MAX_TIME-(Date.now()-qStart)/1000);
+    const pct = (left/MAX_TIME)*100;
+    const tt = document.getElementById('timer-text');
+    const bar = document.getElementById('timer-bar');
+    tt.textContent = Math.ceil(left);
+    tt.className = 'timer-text'+(left<=5?' urgent':'');
+    bar.style.width = pct+'%';
+    bar.className = 'timer-bar'+(left<=5?' urgent':'');
+    if (left<=0) { clearInterval(timerInterval); revealAnswer(); }
+  }, 100);
+}
+
+window.revealAnswer = async function() {
+  clearInterval(timerInterval);
+  const q = WORDS[currentQ];
+  const aSnap = await get(ref(db,`games/${PIN}/answers`));
+  const answers = aSnap.val()||{};
+  const qsSnap = await get(ref(db,`games/${PIN}/questionStart`));
+  const qStart = qsSnap.val()||Date.now();
+  let correct=0; const updates={};
+  for (const [pid,ans] of Object.entries(answers)) {
+    const ok = (ans.answer||'').toUpperCase().trim()===q.word;
+    if (ok) {
+      correct++;
+      const elapsed = Math.min((ans.timestamp-qStart)/1000, MAX_TIME);
+      const pts = Math.round(1000*(1-elapsed/MAX_TIME*0.7));
+      updates[`games/${PIN}/players/${pid}/score`] = (players[pid]?.score||0)+pts;
+      updates[`games/${PIN}/players/${pid}/lastPts`] = pts;
+    } else {
+      updates[`games/${PIN}/players/${pid}/lastPts`] = 0;
+    }
+  }
+  await update(ref(db), updates);
+  await update(gameRef, {phase:'reveal'});
+  const snap = await get(ref(db,`games/${PIN}/players`));
+  players = snap.val()||{};
+  hide('game-panel'); show('reveal-panel');
+  document.getElementById('reveal-box').textContent = `✓ ${q.word} = verlan de ${q.origin}`;
+  document.getElementById('reveal-context').textContent = q.context;
+  const total = Object.keys(players).length;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${correct}</div><div class="stat-label">Correctes</div></div>
+    <div class="stat-card"><div class="stat-num">${total-correct}</div><div class="stat-label">Incorrectes</div></div>
+    <div class="stat-card"><div class="stat-num">${total?Math.round(correct/total*100):0}%</div><div class="stat-label">Réussite</div></div>`;
+  const sorted = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+  document.getElementById('scoreboard-reveal').innerHTML = sorted.map(([,p],i)=>`
+    <div class="score-row">
+      <div class="rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
+      <div class="player-name">${p.name||'Anonyme'}</div>
+      <div class="player-score">${p.score||0} pts</div>
+      <span class="pts-badge ${(p.lastPts||0)>0?'pos':'zero'}">${(p.lastPts||0)>0?'+'+p.lastPts:'+0'}</span>
+    </div>`).join('');
+  document.getElementById('next-btn').textContent = currentQ>=WORDS.length-1?'Voir le classement final':`Question suivante (${currentQ+2}/${WORDS.length}) →`;
+}
+
+window.nextQuestion = async function() {
+  currentQ++; if (currentQ>=WORDS.length) showFinal(); else await showQuestion();
+}
+
+async function showFinal() {
+  await update(gameRef, {phase:'finished'});
+  hide('reveal-panel'); show('final-panel');
+  const snap = await get(ref(db,`games/${PIN}/players`));
+  players = snap.val()||{};
+  const sorted = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+  const podiumOrder = [sorted[1], sorted[0], sorted[2]];
+  const cls = ['pp1','pp2','pp3'];
+  const emojis = ['🥈','🥇','🥉'];
+  const nums = ['2','1','3'];
+  document.getElementById('podium-stage').innerHTML = podiumOrder.map((entry,i)=>{
+    if (!entry) return '';
+    const [,p] = entry;
+    return `<div class="podium-col ${cls[i]}">
+      <div class="p-emoji">${emojis[i]}</div>
+      <div class="p-name">${p.name||'Anonyme'}</div>
+      <div class="p-score">${p.score||0} pts</div>
+      <div class="p-block"><div class="p-num">${nums[i]}</div></div>
+    </div>`;
+  }).join('');
+  const rest = sorted.slice(3);
+  document.getElementById('rest-list').innerHTML = rest.map(([,p],i)=>`
+    <div class="rest-row" style="animation-delay:${i*0.07}s">
+      <div class="rest-rank">${i+4}</div>
+      <div class="rest-name">${p.name||'Anonyme'}</div>
+      <div class="rest-score">${p.score||0} pts</div>
+    </div>`).join('');
+}
+
+function show(id){document.getElementById(id).style.display='block'}
+function hide(id){document.getElementById(id).style.display='none'}
+init();
+</script>
+</body>
+</html>
