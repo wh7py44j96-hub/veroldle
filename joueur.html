@@ -230,12 +230,22 @@ function showQuestion(qIdx, questionStart) {
   document.getElementById('q-counter-p').textContent = `Question ${qIdx+1} / ${WORDS.length}`;
   document.getElementById('hint-text-p').textContent = q.hint;
   document.getElementById('hint-sub-p').textContent = `Mot verlan · ${q.word.length} lettre${q.word.length>1?'s':''}`;
-  const inp = document.getElementById('word-input');
-  inp.value=''; inp.disabled=false; inp.className='word-input';
+
+  // Remplacer l'input pour effacer tous les anciens listeners
+  const oldInp = document.getElementById('word-input');
+  const newInp = oldInp.cloneNode(true);
+  oldInp.parentNode.replaceChild(newInp, oldInp);
+  newInp.value='';
+  newInp.disabled=false;
+  newInp.className='word-input';
+  newInp.addEventListener('input', onInput);
+  newInp.addEventListener('keydown', e => { if (e.key==='Enter') window.submitAnswer(); });
+
   document.getElementById('submit-btn').disabled=false;
   renderSlots('', q.word.length);
-  inp.addEventListener('input', onInput);
-  setTimeout(()=>inp.focus(), 100);
+
+  // Focus avec délai pour mobile
+  setTimeout(()=>{ newInp.focus(); newInp.click(); }, 200);
   startTimer(questionStart);
 }
 
@@ -271,20 +281,25 @@ async function forceSubmit() {
   if (hasAnswered) return;
   hasAnswered = true;
   const inp = document.getElementById('word-input');
-  inp.disabled=true;
-  document.getElementById('submit-btn').disabled=true;
-  await set(ref(db,`games/${PIN}/answers/${playerId}`), {answer:inp.value||'', timestamp:Date.now()});
+  if (inp) inp.disabled=true;
+  const btn = document.getElementById('submit-btn');
+  if (btn) btn.disabled=true;
+  await set(ref(db,`games/${PIN}/answers/${playerId}`), {answer: inp?.value||'', timestamp:Date.now()});
 }
 
 window.submitAnswer = async function() {
   if (hasAnswered) return;
   const inp = document.getElementById('word-input');
-  const val = inp.value.toUpperCase().trim();
-  if (!val) { inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'),400); return; }
+  const val = (inp?.value||'').toUpperCase().trim();
+  if (!val) {
+    if (inp) { inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'),400); }
+    return;
+  }
   hasAnswered = true;
   clearInterval(timerInterval);
-  inp.disabled=true;
-  document.getElementById('submit-btn').disabled=true;
+  if (inp) inp.disabled=true;
+  const btn = document.getElementById('submit-btn');
+  if (btn) btn.disabled=true;
   await set(ref(db,`games/${PIN}/answers/${playerId}`), {answer:val, timestamp:Date.now()});
 }
 
