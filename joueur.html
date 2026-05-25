@@ -2,94 +2,79 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Verlordle — Joueur</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a2e;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem 1rem}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a2e;color:#fff;min-height:100vh;padding:2rem 1rem;display:flex;align-items:flex-start;justify-content:center}
 .wrap{width:100%;max-width:420px}
 h1{font-size:26px;font-weight:800;text-align:center;margin-bottom:4px}
 .sub{text-align:center;color:#AFA9EC;font-size:13px;margin-bottom:2rem}
-@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-@keyframes bounceIn{0%{transform:scale(0.7);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
-@keyframes pulse{from{opacity:1}to{opacity:0.4}}
-@keyframes letterPop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
-@keyframes riseUp{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
-@keyframes bounceIn2{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
-.panel{background:#16213e;border-radius:16px;padding:1.5rem;border:1px solid #0f3460;animation:fadeIn 0.35s ease}
 
-/* Join */
-.join-label{text-align:center;font-size:14px;color:#AFA9EC;margin-bottom:16px}
-.field{width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid #0f3460;background:#0f3460;color:#fff;font-size:16px;margin-bottom:12px;outline:none;transition:border-color 0.2s;display:block}
+.card{background:#16213e;border-radius:16px;padding:1.5rem;border:1px solid #0f3460;margin-bottom:1rem}
+
+/* inputs */
+.field{display:block;width:100%;padding:14px 16px;border-radius:10px;border:2px solid #0f3460;background:#0f3460;color:#fff;font-size:18px;margin-bottom:12px;outline:none;-webkit-appearance:none;appearance:none}
 .field:focus{border-color:#7F77DD}
-.field::placeholder{color:#888780}
-.btn{width:100%;padding:12px;border-radius:10px;border:none;font-size:16px;font-weight:600;cursor:pointer;background:#7F77DD;color:#fff;transition:opacity 0.15s,transform 0.1s;display:block}
-.btn:hover{opacity:0.85}.btn:active{transform:scale(0.97)}
-.btn:disabled{opacity:0.4;cursor:default}
-.err{font-size:13px;color:#e21b3c;text-align:center;margin-top:8px;min-height:18px}
+.field::placeholder{color:#666;font-size:15px}
+.big-btn{display:block;width:100%;padding:14px;border-radius:10px;border:none;font-size:17px;font-weight:700;cursor:pointer;background:#7F77DD;color:#fff;-webkit-tap-highlight-color:transparent}
+.big-btn:active{opacity:0.8}
+.big-btn:disabled{opacity:0.4}
+.err{color:#e21b3c;font-size:13px;text-align:center;margin-top:10px;min-height:18px}
 
-/* Lobby */
-.lobby-name{font-size:22px;font-weight:700;text-align:center;margin-bottom:8px;animation:bounceIn 0.5s ease}
-.lobby-msg{text-align:center;color:#AFA9EC;font-size:15px;line-height:1.7;margin-bottom:1.5rem}
-.score-box{background:#0f3460;border-radius:10px;padding:12px;text-align:center}
-.score-label{font-size:11px;color:#AFA9EC;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-.score-num{font-size:38px;font-weight:800;color:#7F77DD}
+/* lobby */
+.big-name{font-size:24px;font-weight:800;text-align:center;margin-bottom:8px}
+.lobby-msg{text-align:center;color:#AFA9EC;line-height:1.7;margin-bottom:1.5rem}
+.score-box{background:#0f3460;border-radius:12px;padding:14px;text-align:center}
+.score-lbl{font-size:11px;color:#AFA9EC;text-transform:uppercase;letter-spacing:1px}
+.score-num{font-size:40px;font-weight:800;color:#7F77DD;margin-top:4px}
 
-/* Game */
-.q-counter{text-align:center;font-size:12px;color:#AFA9EC;margin-bottom:12px}
-.hint-text{font-size:19px;font-weight:700;text-align:center;margin-bottom:6px;line-height:1.4;animation:slideUp 0.35s ease}
-.hint-sub{text-align:center;font-size:13px;color:#AFA9EC;margin-bottom:1.25rem}
-.timer-text{text-align:center;font-size:44px;font-weight:800;color:#7F77DD;margin-bottom:8px;transition:color 0.3s}
-.timer-text.urgent{color:#e21b3c;animation:pulse 0.5s infinite alternate}
-.timer-bar-bg{height:8px;background:#0f3460;border-radius:4px;overflow:hidden;margin-bottom:1.5rem}
-.timer-bar{height:8px;background:#7F77DD;border-radius:4px;transition:width 0.1s linear,background 0.3s}
-.timer-bar.urgent{background:#e21b3c}
-.letters-row{display:flex;gap:10px;justify-content:center;margin-bottom:1.25rem;flex-wrap:wrap}
-.letter-slot{width:42px;height:50px;border-bottom:3px solid #7F77DD;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-size:22px;font-weight:700;color:#888;transition:color 0.15s}
-.letter-slot.filled{color:#fff;animation:letterPop 0.15s ease}
-.word-input{width:100%;padding:14px 18px;border-radius:12px;border:2px solid #0f3460;background:#0f3460;color:#fff;font-size:24px;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:6px;outline:none;transition:border-color 0.2s;margin-bottom:12px;display:block}
-.word-input:focus{border-color:#7F77DD}
-.word-input::placeholder{font-size:14px;letter-spacing:1px;color:#888780;font-weight:400}
-.word-input.shake{animation:shake 0.4s ease}
-.submit-btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:16px;font-weight:700;cursor:pointer;background:#7F77DD;color:#fff;transition:opacity 0.15s,transform 0.1s;letter-spacing:1px;display:block}
-.submit-btn:hover{opacity:0.85}.submit-btn:active{transform:scale(0.97)}
-.submit-btn:disabled{opacity:0.35;cursor:default}
+/* game */
+.q-num{text-align:center;font-size:12px;color:#AFA9EC;margin-bottom:10px}
+.hint{font-size:19px;font-weight:700;text-align:center;line-height:1.4;margin-bottom:6px}
+.hint-sub{text-align:center;font-size:13px;color:#AFA9EC;margin-bottom:1.2rem}
+.timer-num{font-size:46px;font-weight:800;color:#7F77DD;text-align:center;margin-bottom:8px}
+.timer-num.red{color:#e21b3c}
+.bar-bg{height:8px;background:#0f3460;border-radius:4px;overflow:hidden;margin-bottom:1.4rem}
+.bar{height:8px;background:#7F77DD;border-radius:4px;transition:width 0.1s linear}
+.bar.red{background:#e21b3c}
+.dashes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:1.2rem}
+.dash{width:40px;height:48px;border-bottom:3px solid #7F77DD;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;font-size:22px;font-weight:800;color:#fff}
+.dash.empty{color:#333}
+.answer-field{display:block;width:100%;padding:14px;border-radius:12px;border:2px solid #444;background:#0f3460;color:#fff;font-size:26px;font-weight:800;text-align:center;letter-spacing:4px;outline:none;margin-bottom:12px;-webkit-appearance:none;appearance:none;text-transform:uppercase}
+.answer-field:focus{border-color:#7F77DD}
 
-/* Answered */
-.result-card{border-radius:14px;padding:1.5rem 1rem;text-align:center;margin-bottom:1rem;animation:bounceIn 0.45s ease}
-.result-card.correct{background:#26890c}
-.result-card.wrong{background:#c0392b}
-.result-icon{font-size:44px;margin-bottom:8px}
+/* result */
+.result{border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:1rem}
+.result.ok{background:#26890c}
+.result.ko{background:#c0392b}
+.result-icon{font-size:46px;margin-bottom:8px}
 .result-pts{font-size:36px;font-weight:800;margin-bottom:4px}
 .result-msg{font-size:14px;opacity:0.9}
 .result-answer{font-size:13px;margin-top:6px;opacity:0.8}
-.waiting-next{text-align:center;color:#AFA9EC;font-size:14px;margin-top:1rem;line-height:1.6}
-.context-note{font-size:13px;color:#AFA9EC;text-align:center;line-height:1.6;margin-top:1rem;font-style:italic}
+.ctx{font-size:13px;color:#AFA9EC;text-align:center;line-height:1.6;margin-top:1rem;font-style:italic}
+.wait-msg{text-align:center;color:#AFA9EC;font-size:14px;margin-top:1rem}
 
-/* Final podium */
-.my-rank-banner{border-radius:14px;padding:1.25rem 1rem;text-align:center;margin-bottom:1rem;animation:bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1)}
-.my-rank-banner.gold{background:linear-gradient(135deg,#d89e00,#f5c842)}
-.my-rank-banner.silver{background:linear-gradient(135deg,#888780,#b0afa8)}
-.my-rank-banner.bronze{background:linear-gradient(135deg,#a0522d,#c87941)}
-.my-rank-banner.other{background:#0f3460}
-.my-rank-emoji{font-size:48px;margin-bottom:6px}
-.my-rank-pts{font-size:28px;font-weight:800;margin-bottom:4px}
-.my-rank-msg{font-size:14px;opacity:0.9}
-.podium-title{font-size:18px;font-weight:800;text-align:center;margin:1.25rem 0 0.5rem}
-.podium-sub{text-align:center;color:#AFA9EC;font-size:12px;margin-bottom:1.25rem}
-.podium-stage{display:flex;align-items:flex-end;justify-content:center;gap:10px;height:180px;margin-bottom:1rem}
-.podium-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px}
-.p-emoji{font-size:26px;animation:bounceIn2 0.6s cubic-bezier(0.34,1.56,0.64,1) both}
-.pp1 .p-emoji{animation-delay:0.5s}.pp2 .p-emoji{animation-delay:0.2s}.pp3 .p-emoji{animation-delay:0.8s}
-.p-name{font-size:11px;font-weight:700;text-align:center;max-width:72px;word-break:break-word;line-height:1.3}
-.p-score{font-size:11px;color:#AFA9EC;margin-bottom:3px}
-.p-block{border-radius:8px 8px 0 0;width:72px;transform-origin:bottom;animation:riseUp 0.7s cubic-bezier(0.34,1.56,0.64,1) both;display:flex;align-items:center;justify-content:center}
-.pp1 .p-block{height:85px;background:#1368ce;animation-delay:0.4s}
-.pp2 .p-block{height:120px;background:#d89e00;animation-delay:0.1s}
-.pp3 .p-block{height:60px;background:#a0522d;animation-delay:0.7s}
-.p-num{font-size:20px;font-weight:800;color:#fff}
+/* podium */
+.podium-banner{border-radius:14px;padding:1.5rem 1rem;text-align:center;margin-bottom:1.5rem}
+.podium-banner.gold{background:linear-gradient(135deg,#d89e00,#f5c842);color:#1a1a2e}
+.podium-banner.silver{background:linear-gradient(135deg,#888,#aaa)}
+.podium-banner.bronze{background:linear-gradient(135deg,#a0522d,#c87941)}
+.podium-banner.other{background:#0f3460}
+.banner-emoji{font-size:52px;margin-bottom:8px}
+.banner-pts{font-size:30px;font-weight:800;margin-bottom:4px}
+.banner-msg{font-size:14px;opacity:0.9}
+.podium-title{font-size:18px;font-weight:800;text-align:center;margin-bottom:1.2rem}
+.podium-stage{display:flex;align-items:flex-end;justify-content:center;gap:10px;height:170px;margin-bottom:0}
+.p-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px}
+.p-emo{font-size:28px}
+.p-nm{font-size:11px;font-weight:700;text-align:center;max-width:74px;word-break:break-word}
+.p-sc{font-size:11px;color:#AFA9EC;margin-bottom:3px}
+.p-blk{border-radius:8px 8px 0 0;width:74px;display:flex;align-items:center;justify-content:center}
+.col1 .p-blk{height:90px;background:#1368ce}
+.col2 .p-blk{height:130px;background:#d89e00}
+.col3 .p-blk{height:65px;background:#a0522d}
+.p-n{font-size:22px;font-weight:800;color:#fff}
 </style>
 </head>
 <body>
@@ -97,265 +82,284 @@ h1{font-size:26px;font-weight:800;text-align:center;margin-bottom:4px}
   <h1>Verlordle</h1>
   <div class="sub">Mode Kahoot · Sois le plus rapide !</div>
 
-  <div class="panel" id="join-panel">
-    <div class="join-label">Entre le code affiché par l'animateur</div>
-    <input class="field" type="text" id="pin-input" placeholder="Code PIN (6 chiffres)" maxlength="6" inputmode="numeric">
-    <input class="field" type="text" id="name-input" placeholder="Ton prénom" maxlength="20" autocomplete="given-name">
-    <button class="btn" onclick="joinGame()">Rejoindre la partie</button>
-    <div class="err" id="err-msg"></div>
+  <!-- JOIN -->
+  <div class="card" id="s-join">
+    <div style="text-align:center;color:#AFA9EC;font-size:14px;margin-bottom:16px">Entre le code affiché par l'animateur</div>
+    <input class="field" id="i-pin" type="tel" placeholder="Code PIN (6 chiffres)" maxlength="6">
+    <input class="field" id="i-name" type="text" placeholder="Ton prénom" maxlength="20">
+    <button class="big-btn" id="btn-join">Rejoindre la partie</button>
+    <div class="err" id="err"></div>
   </div>
 
-  <div class="panel" id="lobby-panel" style="display:none">
-    <div class="lobby-name" id="lobby-name"></div>
-    <div class="lobby-msg">Tu es dans la salle !<br>En attente du lancement par l'animateur...</div>
+  <!-- LOBBY -->
+  <div class="card" id="s-lobby" style="display:none">
+    <div class="big-name" id="l-name"></div>
+    <div class="lobby-msg">Tu es dans la salle !<br>En attente du lancement...</div>
     <div class="score-box">
-      <div class="score-label">Ton score</div>
-      <div class="score-num" id="live-score">0</div>
+      <div class="score-lbl">Score</div>
+      <div class="score-num" id="l-score">0</div>
     </div>
   </div>
 
-  <div class="panel" id="game-panel" style="display:none">
-    <div class="q-counter" id="q-counter-p"></div>
-    <div class="hint-text" id="hint-text-p"></div>
-    <div class="hint-sub" id="hint-sub-p"></div>
-    <div class="letters-row" id="letters-row-p"></div>
-    <div class="timer-text" id="timer-p">20</div>
-    <div class="timer-bar-bg"><div class="timer-bar" id="timer-bar-p" style="width:100%"></div></div>
-    <input class="word-input" id="word-input" type="text" placeholder="Tape le mot verlan..." autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" maxlength="10">
-    <button class="submit-btn" id="submit-btn" onclick="submitAnswer()">Valider →</button>
+  <!-- GAME -->
+  <div class="card" id="s-game" style="display:none">
+    <div class="q-num" id="g-num"></div>
+    <div class="hint" id="g-hint"></div>
+    <div class="hint-sub" id="g-sub"></div>
+    <div class="dashes" id="g-dashes"></div>
+    <div class="timer-num" id="g-timer">20</div>
+    <div class="bar-bg"><div class="bar" id="g-bar" style="width:100%"></div></div>
+    <input class="answer-field" id="g-input" type="text" placeholder="Tape ici..." maxlength="12">
+    <button class="big-btn" id="btn-submit">Valider →</button>
   </div>
 
-  <div class="panel" id="answered-panel" style="display:none">
-    <div id="result-wrap"></div>
+  <!-- ANSWERED -->
+  <div class="card" id="s-answered" style="display:none">
+    <div id="a-result"></div>
     <div class="score-box" style="margin-top:1rem">
-      <div class="score-label">Score total</div>
-      <div class="score-num" id="total-score">0</div>
+      <div class="score-lbl">Score total</div>
+      <div class="score-num" id="a-score">0</div>
     </div>
-    <div class="waiting-next">En attente de la prochaine question...</div>
-    <div class="context-note" id="context-note"></div>
+    <div class="wait-msg">En attente de la prochaine question...</div>
+    <div class="ctx" id="a-ctx"></div>
   </div>
 
-  <div class="panel" id="final-panel" style="display:none">
-    <div id="my-rank-wrap"></div>
+  <!-- FINAL -->
+  <div class="card" id="s-final" style="display:none">
+    <div class="podium-banner other" id="f-banner">
+      <div class="banner-emoji" id="f-emoji"></div>
+      <div class="banner-pts" id="f-pts"></div>
+      <div class="banner-msg" id="f-msg"></div>
+    </div>
     <div class="podium-title">🏆 Top 3</div>
-    <div class="podium-sub">Classement final</div>
-    <div class="podium-stage" id="podium-stage-p"></div>
+    <div class="podium-stage" id="f-podium"></div>
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+<script>
+// ── Firebase compat (pas de module, marche partout) ──
+const FB_URL = "https://expose-verlan-sh20-default-rtdb.europe-west1.firebasedatabase.app";
+const API_KEY = "AIzaSyBrjfz2K-u4gmxVOmD2yE01Spp_zBPnNJE";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBrjfz2K-u4gmxVOmD2yE01Spp_zBPnNJE",
-  authDomain: "expose-verlan-sh20.firebaseapp.com",
-  databaseURL: "https://expose-verlan-sh20-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "expose-verlan-sh20",
-  storageBucket: "expose-verlan-sh20.firebasestorage.app",
-  messagingSenderId: "701545495057",
-  appId: "1:701545495057:web:040274e8a9a990c81e0fb0"
-};
+async function fbGet(path) {
+  const r = await fetch(`${FB_URL}/${path}.json?auth=${API_KEY}`);
+  return r.json();
+}
+async function fbSet(path, data) {
+  await fetch(`${FB_URL}/${path}.json?auth=${API_KEY}`, {method:'PUT', body:JSON.stringify(data)});
+}
+async function fbUpdate(path, data) {
+  await fetch(`${FB_URL}/${path}.json?auth=${API_KEY}`, {method:'PATCH', body:JSON.stringify(data)});
+}
+function fbListen(path, cb) {
+  const url = `${FB_URL}/${path}.json`;
+  let timer;
+  let last = null;
+  async function poll() {
+    try {
+      const r = await fetch(url);
+      const d = await r.json();
+      const str = JSON.stringify(d);
+      if (str !== last) { last = str; cb(d); }
+    } catch(e){}
+    timer = setTimeout(poll, 1500);
+  }
+  poll();
+  return ()=>clearTimeout(timer);
+}
 
+// ── Données ──
 const WORDS = [
-  {word:"MEUF",    hint:"Désigne une femme, une fille",                        origin:"FEMME",    context:"L'un des mots verlan les plus répandus — passé dans le français courant de toutes les générations."},
-  {word:"OUF",     hint:"Quelque chose d'intense, d'incroyable",               origin:"FOU",      context:"'C'est ouf !' — tellement lexicalisé qu'il figure désormais dans certains dictionnaires."},
-  {word:"TEUF",    hint:"Une soirée, une fête",                                origin:"FETE",     context:"Utilisé bien au-delà des cités, symbole parfait de la diffusion grand public du verlan."},
-  {word:"RELOU",   hint:"Quelqu'un de pénible, une situation pesante",         origin:"LOURD",    context:"'T'es relou' — intégré au français standard, y compris chez les adultes et dans les médias."},
-  {word:"KEUF",    hint:"Un policier, en argot",                               origin:"FLIC",     context:"Créé pour parler de la police sans être compris : exemple parfait de la fonction cryptique du verlan."},
-  {word:"REUM",    hint:"La mère, la maman",                                   origin:"MERE",     context:"Avec REUP, fait partie du vocabulaire familial verlanisé très répandu dans les cités."},
-  {word:"CIMER",   hint:"Pour remercier quelqu'un",                            origin:"MERCI",    context:"Un des rares mots verlan positifs — sa diffusion illustre bien la récupération grand public."},
-  {word:"VENER",   hint:"Être en colère, irrité",                              origin:"NERVE",    context:"'Je suis trop véner' — exemple de verlan émotionnel très courant."},
-  {word:"REUP",    hint:"Le père, le papa",                                    origin:"PERE",     context:"Pendant de REUM — illustre la verlanisation systématique du vocabulaire familial."},
-  {word:"KEUM",    hint:"Un garçon, un type",                                  origin:"MEC",      context:"Pendant masculin de MEUF — l'un des binômes verlan les plus utilisés."},
-  {word:"REUBEU",  hint:"Désigne une personne d'origine arabe",                origin:"ARABE",    context:"Terme identitaire fort — illustre comment le verlan construit une appartenance communautaire."},
-  {word:"CHELOU",  hint:"Quelque chose de bizarre, de suspect",                origin:"LOUCHE",   context:"'C'est chelou' — utilisé par toutes les générations, exemple parfait de lexicalisation."},
-  {word:"CHANME",  hint:"Quelque chose de très bien, d'impressionnant",        origin:"MECHAN",   context:"'Méchant' devient positif en verlan, comme 'bad' en anglais argotique."},
-  {word:"CAILLRA", hint:"Les jeunes de la rue, la 'racaille'",                 origin:"RACAILLE", context:"Mot emblématique du lexique des cités, chargé politiquement."},
-  {word:"FEUJ",    hint:"Désigne une personne de confession juive",            origin:"JUIF",     context:"Verlan identitaire communautaire, utilisé d'abord au sein de la communauté puis diffusé plus largement."},
+  {word:"MEUF",    hint:"Désigne une femme, une fille",               origin:"FEMME",    ctx:"L'un des mots verlan les plus répandus — passé dans le français courant."},
+  {word:"OUF",     hint:"Quelque chose d'intense, d'incroyable",      origin:"FOU",      ctx:"'C'est ouf !' — tellement lexicalisé qu'il figure dans certains dictionnaires."},
+  {word:"TEUF",    hint:"Une soirée, une fête",                       origin:"FETE",     ctx:"Utilisé bien au-delà des cités — symbole de la diffusion grand public du verlan."},
+  {word:"RELOU",   hint:"Quelqu'un de pénible, une situation pesante",origin:"LOURD",    ctx:"'T'es relou' — intégré au français standard, y compris chez les adultes."},
+  {word:"KEUF",    hint:"Un policier, en argot",                      origin:"FLIC",     ctx:"Créé pour parler de la police sans être compris : la fonction cryptique du verlan."},
+  {word:"REUM",    hint:"La mère, la maman",                          origin:"MERE",     ctx:"Avec REUP, fait partie du vocabulaire familial verlanisé des cités."},
+  {word:"CIMER",   hint:"Pour remercier quelqu'un",                   origin:"MERCI",    ctx:"Un des rares mots verlan positifs — sa diffusion illustre la récupération grand public."},
+  {word:"VENER",   hint:"Être en colère, irrité",                     origin:"NERVE",    ctx:"'Je suis trop véner' — verlan émotionnel très courant."},
+  {word:"REUP",    hint:"Le père, le papa",                           origin:"PERE",     ctx:"Pendant de REUM — verlanisation systématique du vocabulaire familial."},
+  {word:"KEUM",    hint:"Un garçon, un type",                         origin:"MEC",      ctx:"Pendant masculin de MEUF — l'un des binômes verlan les plus utilisés."},
+  {word:"REUBEU",  hint:"Désigne une personne d'origine arabe",       origin:"ARABE",    ctx:"Terme identitaire fort — illustre comment le verlan construit une appartenance communautaire."},
+  {word:"CHELOU",  hint:"Quelque chose de bizarre, de suspect",       origin:"LOUCHE",   ctx:"'C'est chelou' — utilisé par toutes les générations, exemple de lexicalisation."},
+  {word:"CHANME",  hint:"Quelque chose de très bien, impressionnant", origin:"MECHAN",   ctx:"'Méchant' devient positif en verlan, comme 'bad' en anglais argotique."},
+  {word:"CAILLRA", hint:"Les jeunes de la rue, la 'racaille'",        origin:"RACAILLE", ctx:"Mot emblématique du lexique des cités, chargé politiquement."},
+  {word:"FEUJ",    hint:"Désigne une personne de confession juive",   origin:"JUIF",     ctx:"Verlan identitaire communautaire, d'abord au sein de la communauté puis diffusé plus largement."},
 ];
 
 const MAX_TIME = 20;
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
 let PIN='', playerId='', playerName='', myScore=0;
-let timerInterval=null, hasAnswered=false, currentWordLen=0;
+let timerInterval=null, hasAnswered=false, stopListen=null;
 
-window.joinGame = async function() {
-  PIN = document.getElementById('pin-input').value.trim();
-  playerName = document.getElementById('name-input').value.trim();
-  const err = document.getElementById('err-msg');
-  if (!PIN || PIN.length!==6) { err.textContent='Entre un code PIN à 6 chiffres.'; return; }
-  if (!playerName) { err.textContent='Entre ton prénom.'; return; }
-  err.textContent='';
-  const snap = await get(ref(db,`games/${PIN}`));
-  if (!snap.exists()) { err.textContent='Partie introuvable. Vérifie le PIN.'; return; }
-  if (snap.val().phase==='finished') { err.textContent='Cette partie est déjà terminée.'; return; }
-  playerId = 'p_'+Math.random().toString(36).substr(2,9);
-  await set(ref(db,`games/${PIN}/players/${playerId}`), {name:playerName, score:0, lastPts:0});
-  showOnly('lobby-panel');
-  document.getElementById('lobby-name').textContent = playerName;
-  listenGame();
+// ── show/hide ──
+function show(id){
+  ['s-join','s-lobby','s-game','s-answered','s-final'].forEach(s=>{
+    document.getElementById(s).style.display = s===id?'block':'none';
+  });
 }
 
-function listenGame() {
-  onValue(ref(db,`games/${PIN}`), snap => {
-    const game = snap.val(); if (!game) return;
-    myScore = game.players?.[playerId]?.score||0;
-    const el = document.getElementById('live-score');
-    if (el) el.textContent = myScore;
-    if (game.phase==='lobby') showOnly('lobby-panel');
-    else if (game.phase==='playing') {
-      const q = WORDS[game.currentQ];
-      currentWordLen = q.word.length;
+// ── JOIN ──
+document.getElementById('btn-join').addEventListener('click', async function() {
+  const pin = document.getElementById('i-pin').value.trim();
+  const name = document.getElementById('i-name').value.trim();
+  const err = document.getElementById('err');
+  err.textContent = '';
+  if (pin.length !== 6 || isNaN(pin)) { err.textContent = 'Code PIN invalide (6 chiffres).'; return; }
+  if (!name) { err.textContent = 'Entre ton prénom.'; return; }
+  this.disabled = true;
+  this.textContent = 'Connexion...';
+  try {
+    const game = await fbGet(`games/${pin}`);
+    if (!game) { err.textContent = 'Partie introuvable. Vérifie le PIN.'; this.disabled=false; this.textContent='Rejoindre la partie'; return; }
+    if (game.phase === 'finished') { err.textContent = 'Cette partie est terminée.'; this.disabled=false; this.textContent='Rejoindre la partie'; return; }
+    PIN = pin;
+    playerName = name;
+    playerId = 'p_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+    await fbSet(`games/${PIN}/players/${playerId}`, {name:playerName, score:0, lastPts:0});
+    document.getElementById('l-name').textContent = playerName;
+    show('s-lobby');
+    startListening();
+  } catch(e) {
+    err.textContent = 'Erreur réseau. Réessaie.';
+    this.disabled=false; this.textContent='Rejoindre la partie';
+  }
+});
+
+// ── ÉCOUTE ──
+function startListening() {
+  if (stopListen) stopListen();
+  stopListen = fbListen(`games/${PIN}`, function(game) {
+    if (!game) return;
+    myScore = game.players?.[playerId]?.score || 0;
+    const lsc = document.getElementById('l-score');
+    if (lsc) lsc.textContent = myScore;
+
+    if (game.phase === 'lobby') {
+      show('s-lobby');
+    } else if (game.phase === 'playing') {
       hasAnswered = false;
       showQuestion(game.currentQ, game.questionStart);
-    }
-    else if (game.phase==='reveal') {
+    } else if (game.phase === 'reveal') {
       clearInterval(timerInterval);
-      const lastPts = game.players?.[playerId]?.lastPts||0;
-      showReveal(lastPts, game.correctAnswer, game.currentQ);
-    }
-    else if (game.phase==='finished') {
+      const pts = game.players?.[playerId]?.lastPts || 0;
+      showAnswered(pts, game.correctAnswer, game.currentQ);
+    } else if (game.phase === 'finished') {
       clearInterval(timerInterval);
       showFinal(game.players);
     }
   });
 }
 
-function showQuestion(qIdx, questionStart) {
-  showOnly('game-panel');
+// ── QUESTION ──
+let lastQIdx = -1;
+function showQuestion(qIdx, qStart) {
+  if (hasAnswered && lastQIdx === qIdx) return;
+  lastQIdx = qIdx;
+  show('s-game');
   const q = WORDS[qIdx];
-  document.getElementById('q-counter-p').textContent = `Question ${qIdx+1} / ${WORDS.length}`;
-  document.getElementById('hint-text-p').textContent = q.hint;
-  document.getElementById('hint-sub-p').textContent = `Mot verlan · ${q.word.length} lettre${q.word.length>1?'s':''}`;
+  document.getElementById('g-num').textContent = `Question ${qIdx+1} / ${WORDS.length}`;
+  document.getElementById('g-hint').textContent = q.hint;
+  document.getElementById('g-sub').textContent = `Mot verlan · ${q.word.length} lettre${q.word.length>1?'s':''}`;
+  renderDashes('', q.word.length);
 
-  // Remplacer l'input pour effacer tous les anciens listeners
-  const oldInp = document.getElementById('word-input');
-  const newInp = oldInp.cloneNode(true);
-  oldInp.parentNode.replaceChild(newInp, oldInp);
-  newInp.value='';
-  newInp.disabled=false;
-  newInp.className='word-input';
-  newInp.addEventListener('input', onInput);
-  newInp.addEventListener('keydown', e => { if (e.key==='Enter') window.submitAnswer(); });
+  const inp = document.getElementById('g-input');
+  inp.value = '';
+  inp.disabled = false;
+  inp.oninput = function() {
+    let v = this.value.toUpperCase().replace(/[^A-Z]/g,'');
+    this.value = v;
+    renderDashes(v, q.word.length);
+  };
 
-  document.getElementById('submit-btn').disabled=false;
-  renderSlots('', q.word.length);
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('btn-submit').onclick = submitAnswer;
 
-  // Focus avec délai pour mobile
-  setTimeout(()=>{ newInp.focus(); newInp.click(); }, 200);
-  startTimer(questionStart);
+  startTimer(qStart);
+  setTimeout(()=>inp.focus(), 300);
 }
 
-function onInput(e) {
-  const val = e.target.value.toUpperCase().replace(/[^A-Z]/g,'');
-  e.target.value = val;
-  renderSlots(val, currentWordLen);
+function renderDashes(val, len) {
+  document.getElementById('g-dashes').innerHTML =
+    Array.from({length:len}).map((_,i)=>{
+      const ch = val[i]||'';
+      return `<div class="dash ${ch?'':'empty'}">${ch||'_'}</div>`;
+    }).join('');
 }
 
-function renderSlots(val, len) {
-  document.getElementById('letters-row-p').innerHTML = Array.from({length:len}).map((_,i)=>{
-    const ch = val[i]||'';
-    return `<div class="letter-slot ${ch?'filled':''}">${ch||'_'}</div>`;
-  }).join('');
-}
-
+// ── TIMER ──
 function startTimer(qStart) {
   clearInterval(timerInterval);
   timerInterval = setInterval(()=>{
-    const left = Math.max(0, MAX_TIME-(Date.now()-qStart)/1000);
-    const tt = document.getElementById('timer-p');
-    const bar = document.getElementById('timer-bar-p');
-    if (!tt||!bar) return;
-    tt.textContent = Math.ceil(left);
-    tt.className = 'timer-text'+(left<=5?' urgent':'');
-    bar.style.width = (left/MAX_TIME*100)+'%';
-    bar.className = 'timer-bar'+(left<=5?' urgent':'');
-    if (left<=0) { clearInterval(timerInterval); if (!hasAnswered) forceSubmit(); }
-  }, 100);
+    const left = Math.max(0, MAX_TIME - (Date.now()-qStart)/1000);
+    const pct = left/MAX_TIME*100;
+    const tn = document.getElementById('g-timer');
+    const bar = document.getElementById('g-bar');
+    if (!tn||!bar) return;
+    tn.textContent = Math.ceil(left);
+    tn.className = 'timer-num'+(left<=5?' red':'');
+    bar.style.width = pct+'%';
+    bar.className = 'bar'+(left<=5?' red':'');
+    if (left<=0) { clearInterval(timerInterval); if (!hasAnswered) doSubmit(''); }
+  }, 200);
 }
 
-async function forceSubmit() {
-  if (hasAnswered) return;
-  hasAnswered = true;
-  const inp = document.getElementById('word-input');
-  if (inp) inp.disabled=true;
-  const btn = document.getElementById('submit-btn');
-  if (btn) btn.disabled=true;
-  await set(ref(db,`games/${PIN}/answers/${playerId}`), {answer: inp?.value||'', timestamp:Date.now()});
+// ── SUBMIT ──
+async function submitAnswer() {
+  const val = (document.getElementById('g-input').value||'').toUpperCase().trim();
+  await doSubmit(val);
 }
 
-window.submitAnswer = async function() {
+async function doSubmit(val) {
   if (hasAnswered) return;
-  const inp = document.getElementById('word-input');
-  const val = (inp?.value||'').toUpperCase().trim();
-  if (!val) {
-    if (inp) { inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'),400); }
-    return;
-  }
   hasAnswered = true;
   clearInterval(timerInterval);
-  if (inp) inp.disabled=true;
-  const btn = document.getElementById('submit-btn');
-  if (btn) btn.disabled=true;
-  await set(ref(db,`games/${PIN}/answers/${playerId}`), {answer:val, timestamp:Date.now()});
+  const inp = document.getElementById('g-input');
+  const btn = document.getElementById('btn-submit');
+  if (inp) inp.disabled = true;
+  if (btn) btn.disabled = true;
+  await fbSet(`games/${PIN}/answers/${playerId}`, {answer:val, timestamp:Date.now()});
 }
 
-function showReveal(pts, correctAnswer, qIdx) {
-  showOnly('answered-panel');
-  const correct = pts>0;
-  document.getElementById('result-wrap').innerHTML = correct
-    ? `<div class="result-card correct">
-        <div class="result-icon">✓</div>
-        <div class="result-pts">+${pts} pts</div>
-        <div class="result-msg">Bonne réponse !</div>
-       </div>`
-    : `<div class="result-card wrong">
-        <div class="result-icon">✗</div>
-        <div class="result-pts">+0 pts</div>
-        <div class="result-msg">Pas tout à fait !</div>
-        <div class="result-answer">La réponse : <strong>${correctAnswer}</strong></div>
-       </div>`;
-  document.getElementById('total-score').textContent = myScore;
-  document.getElementById('context-note').textContent = WORDS[qIdx]?.context||'';
+// ── ANSWERED ──
+function showAnswered(pts, correctAnswer, qIdx) {
+  show('s-answered');
+  const ok = pts > 0;
+  document.getElementById('a-result').innerHTML = ok
+    ? `<div class="result ok"><div class="result-icon">✓</div><div class="result-pts">+${pts} pts</div><div class="result-msg">Bonne réponse !</div></div>`
+    : `<div class="result ko"><div class="result-icon">✗</div><div class="result-pts">+0 pts</div><div class="result-msg">Raté !</div><div class="result-answer">Réponse : <strong>${correctAnswer}</strong></div></div>`;
+  document.getElementById('a-score').textContent = myScore;
+  document.getElementById('a-ctx').textContent = WORDS[qIdx]?.ctx || '';
 }
 
+// ── FINAL ──
 function showFinal(players) {
-  showOnly('final-panel');
+  show('s-final');
   if (!players) return;
   const sorted = Object.entries(players).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
-  const myRank = sorted.findIndex(([id])=>id===playerId)+1;
-  const myScoreFinal = players[playerId]?.score||0;
-  const bannerClass = myRank===1?'gold':myRank===2?'silver':myRank===3?'bronze':'other';
-  const rankEmoji = myRank===1?'🥇':myRank===2?'🥈':myRank===3?'🥉':'#'+myRank;
-  const rankMsg = myRank===1?'Champion du verlan !':myRank<=3?`Podium ! ${myRank}e sur ${sorted.length}`:`${myRank}e sur ${sorted.length} — bien joué !`;
-  document.getElementById('my-rank-wrap').innerHTML = `
-    <div class="my-rank-banner ${bannerClass}">
-      <div class="my-rank-emoji">${rankEmoji}</div>
-      <div class="my-rank-pts">${myScoreFinal} pts</div>
-      <div class="my-rank-msg">${rankMsg}</div>
-    </div>`;
-  const podiumOrder = [sorted[1], sorted[0], sorted[2]];
-  const cls = ['pp1','pp2','pp3'];
-  const emojis = ['🥈','🥇','🥉'];
-  const nums = ['2','1','3'];
-  document.getElementById('podium-stage-p').innerHTML = podiumOrder.map((entry,i)=>{
-    if (!entry) return '';
-    const [,p] = entry;
-    return `<div class="podium-col ${cls[i]}">
-      <div class="p-emoji">${emojis[i]}</div>
-      <div class="p-name">${p.name||'Anonyme'}</div>
-      <div class="p-score">${p.score||0} pts</div>
-      <div class="p-block"><div class="p-num">${nums[i]}</div></div>
+  const rank = sorted.findIndex(([id])=>id===playerId)+1;
+  const myPts = players[playerId]?.score||0;
+
+  const banner = document.getElementById('f-banner');
+  const cls = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'other';
+  banner.className = `podium-banner ${cls}`;
+  document.getElementById('f-emoji').textContent = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'#'+rank;
+  document.getElementById('f-pts').textContent = myPts+' pts';
+  document.getElementById('f-msg').textContent = rank===1?'Champion du verlan !':rank<=3?`Podium ! ${rank}e sur ${sorted.length}`:`${rank}e sur ${sorted.length} — bien joué !`;
+
+  const order = [sorted[1], sorted[0], sorted[2]];
+  const cls2 = ['col1','col2','col3'];
+  const emj = ['🥈','🥇','🥉'];
+  const num = ['2','1','3'];
+  document.getElementById('f-podium').innerHTML = order.map((e,i)=>{
+    if (!e) return '';
+    const [,p]=e;
+    return `<div class="p-col ${cls2[i]}">
+      <div class="p-emo">${emj[i]}</div>
+      <div class="p-nm">${p.name||'?'}</div>
+      <div class="p-sc">${p.score||0} pts</div>
+      <div class="p-blk"><div class="p-n">${num[i]}</div></div>
     </div>`;
   }).join('');
-}
-
-function showOnly(id) {
-  ['join-panel','lobby-panel','game-panel','answered-panel','final-panel'].forEach(p=>
-    document.getElementById(p).style.display = p===id?'block':'none');
 }
 </script>
 </body>
